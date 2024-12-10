@@ -22,9 +22,9 @@
         <activity
                 android:name=".SignInActivity"
                 android:exported="true"
-                android:label="@string/app_name"
+                android:label="Sign In"
                 android:theme="@style/Theme.FoodShare">
-            <intent-filter>
+        <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
