@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.view_meals -> replaceFragment(ViewMeals())
+                R.id.add_meal -> replaceFragment(AddMeals())
                 R.id.buy_meals -> replaceFragment(BuyMeals())
                 R.id.profile -> replaceFragment(Profile())
                 else -> false

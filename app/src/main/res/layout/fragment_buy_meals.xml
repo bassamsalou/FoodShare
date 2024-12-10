@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/teal_200"
     tools:context=".BuyMeals">
 
     <!-- TODO: Update blank fragment layout -->
@@ -12,6 +11,7 @@
         android:layout_height="wrap_content"
         android:text="Buy Meals Fragment"
         android:textSize="26dp"
+        android:textColor="@color/black"
         android:layout_gravity="center"/>
 
 </FrameLayout>
