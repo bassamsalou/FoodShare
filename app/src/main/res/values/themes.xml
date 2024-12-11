@@ -1,12 +1,10 @@
 <resources>
-    <!-- App theme that uses Material Components -->
+
     <style name="Theme.FoodShare" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Customize your theme here -->
-        <!-- You can add other customizations like colors, typography, etc. -->
+     ´´
     </style>
 
-    <!-- Style for the inner text input field -->
-    <style name="LoginTextInputInnerFieldStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+´´    <style name="InnerFieldStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:textColor">@color/black</item>
         <item name="android:textColorHint">@color/black</item>
         <item name="android:maxLines">1</item>
@@ -16,7 +14,7 @@
 
 
     <!-- Style for the outer text input layout -->
-    <style name="LoginTextInputOuterFieldStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <style name="OuterFieldStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:layout_marginTop">15dp</item>
         <item name="android:layout_marginBottom">15dp</item>
     </style>

@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.view_meals -> replaceFragment(ViewMeals())
                 R.id.add_meal -> replaceFragment(AddMeals())
                 R.id.buy_meals -> replaceFragment(BuyMeals())
-                R.id.profile -> replaceFragment(Profile())
+                R.id.profile -> replaceFragment(ProfileFragment())
                 else -> false
             }
             true

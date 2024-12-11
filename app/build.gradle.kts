@@ -64,11 +64,15 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.material)
+    implementation(libs.circleimageview)
+
 
     // Firebase dependencies
     implementation(platform(libs.firebase.bom)) // Use Firebase BOM for version management
     implementation(libs.firebase.auth)
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.storage.ktx)
 
     // Testing libraries
     testImplementation(libs.junit)

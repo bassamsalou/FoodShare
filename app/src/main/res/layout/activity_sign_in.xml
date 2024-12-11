@@ -9,7 +9,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/emailLayout"
-            style="@style/LoginTextInputOuterFieldStyle"
+            style="@style/InnerFieldStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:boxStrokeColor="@color/black"
@@ -31,7 +31,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/passwordLayout"
-            style="@style/LoginTextInputOuterFieldStyle"
+            style="@style/OuterFieldStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:boxStrokeColor="@color/black"
@@ -44,7 +44,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/passET"
-                style="@style/LoginTextInputInnerFieldStyle"
+                style="@style/InnerFieldStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Type Your Password"
