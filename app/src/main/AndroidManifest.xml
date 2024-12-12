@@ -1,8 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-<application
+    <application
             android:allowBackup="true"
             android:dataExtractionRules="@xml/data_extraction_rules"
             android:fullBackupContent="@xml/backup_rules"
@@ -13,33 +12,53 @@
             android:theme="@style/Theme.FoodShare"
             tools:targetApi="31">
 
-
-
-    <activity
-                android:name=".MainActivity"
-                android:exported="true"
-                android:label="@string/app_name"
-                android:theme="@style/Theme.FoodShare">
-
-        </activity>
-
+        <!-- Sign In Activity - Launcher Activity -->
         <activity
                 android:name=".SignInActivity"
                 android:exported="true"
                 android:label="Sign In"
                 android:theme="@style/Theme.FoodShare">
-        <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-    <activity
-            android:name=".SignUpActivity"
-            android:exported="true"
-            android:label="Sign In"
-            android:theme="@style/Theme.FoodShare">
+        <!-- Sign Up Activity -->
+        <activity
+                android:name=".SignUpActivity"
+                android:exported="true"
+                android:label="Sign Up"
+                android:theme="@style/Theme.FoodShare" />
 
-    </activity>
+        <!-- Main Activity -->
+        <activity
+                android:name=".MainActivity"
+                android:exported="true"
+                android:label="Main"
+                android:theme="@style/Theme.FoodShare" />
+
+        <!-- Add Meals Activity -->
+        <activity
+                android:name=".AddMealsActivity"
+                android:exported="true"
+                android:label="Add Meals"
+                android:theme="@style/Theme.FoodShare" />
+
+        <!-- Buy Meals Activity -->
+        <activity
+                android:name=".BuyMealsActivity"
+                android:exported="true"
+                android:label="Buy Meals"
+                android:theme="@style/Theme.FoodShare" />
+
+        <!-- Profile Activity -->
+        <activity
+                android:name=".ProfileActivity"
+                android:exported="true"
+                android:label="Profile"
+                android:theme="@style/Theme.FoodShare" />
+
     </application>
+
 </manifest>

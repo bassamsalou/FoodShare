@@ -1,116 +1,161 @@
 package com.example.foodshare
 
-import android.app.Activity
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.net.Uri
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import com.example.foodshare.databinding.FragmentProfileBinding
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import com.example.foodshare.data.User
 import com.example.foodshare.data.UserRepository
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.example.foodshare.ui.theme.FoodShareTheme
 import kotlinx.coroutines.launch
-import java.io.InputStream
-import java.net.URL
-import java.util.UUID
 
-class ProfileFragment : Fragment(R.layout.fragment_profile) {
+class ProfileActivity : ComponentActivity() {
 
-    private lateinit var binding: FragmentProfileBinding
     private val userRepository = UserRepository()
-    private val auth = FirebaseAuth.getInstance()
 
-    private var isEditMode = false
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentProfileBinding.inflate(inflater, container, false)
-
-        // Load user data when the fragment is created
-        loadUserProfile()
-
-        // Set up button click listener
-        binding.editSaveButton.setOnClickListener {
-            if (isEditMode) {
-                saveProfile() // Save changes when in edit mode
-            } else {
-                enterEditMode() // Enter edit mode
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            FoodShareTheme {
+                ProfileScreen(userRepository = userRepository)
             }
         }
+    }
+}
 
-        return binding.root
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProfileScreen(userRepository: UserRepository) {
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    // State variables for the user profile
+    var name by remember { mutableStateOf("") }
+    var age by remember { mutableStateOf("") }
+    var isEditMode by remember { mutableStateOf(false) }
+
+    // State for toast messages
+    var toastMessage by remember { mutableStateOf<String?>(null) }
+
+    // Handle toast messages
+    toastMessage?.let { message ->
+        LaunchedEffect(message) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            toastMessage = null // Reset the message
+        }
     }
 
-    private fun loadUserProfile() {
-        CoroutineScope(Dispatchers.IO).launch {
+    // Load user profile when the screen is first displayed
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
             val user = userRepository.getUserProfile()
-            requireActivity().runOnUiThread {
-                if (user != null) {
-                    // Display user info
-                    binding.etFirstName.setText(user.name)
-                    binding.etAge.setText(user.age.toString())
-
-                    // Always set the placeholder image for the profile picture
-                    binding.profileImage.setImageResource(R.drawable.chefs)
-
-                    exitEditMode() // Start in view mode
-                } else {
-                    Toast.makeText(requireContext(), "Failed to load user data", Toast.LENGTH_SHORT).show()
-                }
+            if (user != null) {
+                name = user.name
+                age = user.age.toString()
+            } else {
+                toastMessage = "Failed to load user data"
             }
         }
     }
 
-    private fun saveProfile() {
-        // Since the profile picture cannot be changed, just update other user info
-        updateUserProfile()
-    }
-
-    private fun updateUserProfile() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val success = userRepository.addOrUpdateUser(
-                User(
-                    id = "",  // This might not be used here, make sure it's required
-                    userId = auth.currentUser?.uid ?: "",
-                    name = binding.etFirstName.text.toString(),
-                    age = binding.etAge.text.toString().toIntOrNull() ?: 0,
-                )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Profile") },
             )
-            requireActivity().runOnUiThread {
-                if (success) {
-                    Toast.makeText(requireContext(), "Profile updated", Toast.LENGTH_SHORT).show()
-                    exitEditMode() // Return to view mode
+        },
+        content = { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Profile picture
+                Image(
+                    painter = painterResource(id = R.drawable.chefs),
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .size(120.dp)
+                        .padding(bottom = 16.dp)
+                )
+
+                // Name field
+                if (isEditMode) {
+                    BasicTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .background(Color.LightGray)
+                            .padding(8.dp)
+                    )
                 } else {
-                    Toast.makeText(requireContext(), "Failed to update profile", Toast.LENGTH_SHORT).show()
+                    Text(name, style = MaterialTheme.typography.bodyLarge)
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Age field
+                if (isEditMode) {
+                    BasicTextField(
+                        value = age,
+                        onValueChange = { age = it },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .background(Color.LightGray)
+                            .padding(8.dp),
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                    )
+                } else {
+                    Text("Age: $age", style = MaterialTheme.typography.bodyLarge)
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Edit/Save button
+                Button(onClick = {
+                    if (isEditMode) {
+                        // Save profile
+                        coroutineScope.launch {
+                            val success = userRepository.addOrUpdateUser(
+                                User(
+                                    userId = "",
+                                    name = name,
+                                    age = age.toIntOrNull() ?: 0
+                                )
+                            )
+                            if (success) {
+                                toastMessage = "Profile updated"
+                                isEditMode = false
+                            } else {
+                                toastMessage = "Failed to update profile"
+                            }
+                        }
+                    } else {
+                        isEditMode = true
+                    }
+                }) {
+                    Text(if (isEditMode) "Save" else "Edit")
                 }
             }
         }
-    }
-
-    private fun enterEditMode() {
-        isEditMode = true
-        binding.editSaveButton.text = "Save"
-        binding.etFirstName.isEnabled = true
-        binding.etAge.isEnabled = true
-    }
-
-    private fun exitEditMode() {
-        isEditMode = false
-        binding.editSaveButton.text = "Edit"
-        binding.etFirstName.isEnabled = false
-        binding.etAge.isEnabled = false
-    }
+    )
 }

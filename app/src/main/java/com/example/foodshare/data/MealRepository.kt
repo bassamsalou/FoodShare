@@ -23,6 +23,7 @@ class MealRepository {
         }
     }
 
+    // Function to fetch meals for the current user
     suspend fun getMealsForCurrentUser(): List<Meal> {
         val userId = auth.currentUser?.uid ?: return emptyList()
         return try {
@@ -34,6 +35,7 @@ class MealRepository {
         }
     }
 
+    // Function to fetch a meal by its ID
     suspend fun getMealById(mealId: String): Meal? {
         return try {
             val document = mealsCollection.document(mealId).get().await()
@@ -45,6 +47,17 @@ class MealRepository {
         } catch (e: Exception) {
             e.printStackTrace()
             null
+        }
+    }
+
+    // New function to fetch all meals
+    suspend fun getAllMeals(): List<Meal> {
+        return try {
+            val result = mealsCollection.get().await()
+            result.toObjects(Meal::class.java)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
         }
     }
 }
