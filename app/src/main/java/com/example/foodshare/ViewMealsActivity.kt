@@ -11,11 +11,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.lifecycleScope
 import com.example.foodshare.data.Meal
 import com.example.foodshare.data.MealRepository
 import com.example.foodshare.ui.theme.FoodShareTheme
-import kotlinx.coroutines.launch
 
 class ViewMealsActivity : ComponentActivity() {
 
@@ -98,7 +96,8 @@ fun MealCard(meal: Meal) {
             Text(text = "Description: ${meal.description}")
             Text(text = "Calories: ${meal.calories}")
             Text(text = "Protein: ${meal.protein}")
-            Text(text = "Price: $${meal.price}")
+            Text(text = "Price: dkk${meal.price}")
+            Text(text = "Address: ${meal.address}")
         }
     }
 }

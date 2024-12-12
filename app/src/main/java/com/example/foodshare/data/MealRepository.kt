@@ -13,9 +13,10 @@ class MealRepository {
     // Function to add a meal
     suspend fun addMeal(meal: Meal): Boolean {
         val userId = auth.currentUser?.uid ?: return false
-        val mealWithUserId = meal.copy(userId = userId)
+        val documentRef = mealsCollection.document() // Generate unique document ID
+        val mealWithId = meal.copy(id = documentRef.id, userId = userId) // Assign ID
         return try {
-            mealsCollection.add(mealWithUserId).await()
+            documentRef.set(mealWithId).await()
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -23,12 +24,15 @@ class MealRepository {
         }
     }
 
+
     // Function to fetch meals for the current user
     suspend fun getMealsForCurrentUser(): List<Meal> {
         val userId = auth.currentUser?.uid ?: return emptyList()
         return try {
             val result = mealsCollection.whereEqualTo("userId", userId).get().await()
-            result.toObjects(Meal::class.java)
+            result.documents.mapNotNull { doc ->
+                doc.toObject(Meal::class.java)?.copy(id = doc.id)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
@@ -40,7 +44,7 @@ class MealRepository {
         return try {
             val document = mealsCollection.document(mealId).get().await()
             if (document.exists()) {
-                document.toObject(Meal::class.java)
+                document.toObject(Meal::class.java)?.copy(id = document.id)
             } else {
                 null
             }
@@ -51,10 +55,14 @@ class MealRepository {
     }
 
     // New function to fetch all meals
+    // Function to fetch all meals
     suspend fun getAllMeals(): List<Meal> {
         return try {
             val result = mealsCollection.get().await()
-            result.toObjects(Meal::class.java)
+            result.documents.mapNotNull { doc ->
+                val meal = doc.toObject(Meal::class.java)
+                meal?.copy(id = doc.id) // Populate the ID field
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()

@@ -1,5 +1,6 @@
 package com.example.foodshare
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.example.foodshare.data.User
 import com.example.foodshare.data.UserRepository
 import com.example.foodshare.ui.theme.FoodShareTheme
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class ProfileActivity : ComponentActivity() {
@@ -31,7 +33,12 @@ class ProfileActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             FoodShareTheme {
-                ProfileScreen(userRepository = userRepository)
+                ProfileScreen(userRepository = userRepository, onLogout = {
+                    FirebaseAuth.getInstance().signOut() // Sign out the user
+                    val intent = Intent(this, SignInActivity::class.java)
+                    startActivity(intent)
+                    finish() // Ensure this activity is removed from the backstack
+                })
             }
         }
     }
@@ -39,7 +46,7 @@ class ProfileActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(userRepository: UserRepository) {
+fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -154,6 +161,16 @@ fun ProfileScreen(userRepository: UserRepository) {
                     }
                 }) {
                     Text(if (isEditMode) "Save" else "Edit")
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Logout button
+                Button(
+                    onClick = { onLogout() }, // Trigger logout when button is clicked
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text("Logout")
                 }
             }
         }

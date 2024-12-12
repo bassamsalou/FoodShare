@@ -43,6 +43,7 @@ fun AddMealsScreen(mealRepository: MealRepository) {
     var calories by remember { mutableStateOf("") }
     var protein by remember { mutableStateOf("") }
     var price by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("")}
 
     // State to show toast messages
     var toastMessage by remember { mutableStateOf<String?>(null) }
@@ -101,7 +102,15 @@ fun AddMealsScreen(mealRepository: MealRepository) {
                 OutlinedTextField(
                     value = price,
                     onValueChange = { price = it },
-                    label = { Text("Price ($)") },
+                    label = { Text("Price (dkk)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                )
+
+                OutlinedTextField(
+                    value = address,
+                    onValueChange = { address = it },
+                    label = { Text("Address") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
@@ -115,7 +124,8 @@ fun AddMealsScreen(mealRepository: MealRepository) {
                                 description = description,
                                 calories = calories,
                                 protein = protein,
-                                price = price
+                                price = price,
+                                address = address
                             )
                             val success = mealRepository.addMeal(newMeal)
                             toastMessage = if (success) {
@@ -125,6 +135,7 @@ fun AddMealsScreen(mealRepository: MealRepository) {
                                 calories = ""
                                 protein = ""
                                 price = ""
+                                address = ""
                                 "Meal added successfully!"
                             } else {
                                 "Failed to add meal. Try again."

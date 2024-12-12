@@ -1,5 +1,6 @@
 package com.example.foodshare
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,15 +12,17 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.foodshare.data.MealRepository
 import com.example.foodshare.data.UserRepository
 import com.example.foodshare.ui.theme.FoodShareTheme
-import androidx.compose.ui.Modifier
-
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
 
@@ -53,39 +56,60 @@ fun MainScreen(
         ) {
             composable("view_meals") { ViewMealsScreen(mealRepository) }
             composable("add_meal") { AddMealsScreen(mealRepository) }
-            composable("buy_meals") { BuyMealsScreen(mealRepository) }
-            composable("profile") { ProfileScreen(userRepository) }
+            composable("buy_meals") {
+                BuyMealsScreen(
+                    mealRepository = mealRepository,
+                    onMealClick = { meal ->
+                        if (meal.id.isNotEmpty()) {
+                            navController.navigate("meal_details/${meal.id}")
+                        }
+                    }
+                )
+            }
+            composable("meal_details/{mealId}") { backStackEntry ->
+                val mealId = backStackEntry.arguments?.getString("mealId") ?: ""
+                MealDetailsScreen(mealId, mealRepository, navController)
+            }
+            composable("profile") {
+                ProfileScreen(userRepository = userRepository, onLogout = {
+                    FirebaseAuth.getInstance().signOut()
+                    val intent = Intent(navController.context, SignInActivity::class.java)
+                    navController.context.startActivity(intent)
+                })
+            }
         }
     }
 }
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
     NavigationBar {
         NavigationBarItem(
             icon = { Icon(Icons.Default.Home, contentDescription = "View Meals") },
             label = { Text("View Meals") },
-            selected = false,
+            selected = currentRoute == "view_meals",
             onClick = { navController.navigate("view_meals") }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.Add, contentDescription = "Add Meal") },
             label = { Text("Add Meal") },
-            selected = false,
+            selected = currentRoute == "add_meal",
             onClick = { navController.navigate("add_meal") }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Buy Meal") },
             label = { Text("Buy Meal") },
-            selected = false,
+            selected = currentRoute == "buy_meals",
             onClick = { navController.navigate("buy_meals") }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
             label = { Text("Profile") },
-            selected = false,
+            selected = currentRoute == "profile",
             onClick = { navController.navigate("profile") }
         )
     }
 }
-
