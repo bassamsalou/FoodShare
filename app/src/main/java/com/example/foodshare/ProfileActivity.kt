@@ -1,33 +1,37 @@
 package com.example.foodshare
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import com.example.foodshare.databinding.FragmentProfileBinding
-import android.content.Intent
-import android.app.Activity
+import android.widget.ImageView
 import android.net.Uri
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.example.foodshare.databinding.FragmentProfileBinding
 import com.example.foodshare.data.User
 import com.example.foodshare.data.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
+import java.io.InputStream
+import java.net.URL
+import java.util.UUID
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     private lateinit var binding: FragmentProfileBinding
     private val userRepository = UserRepository()
-    private val storage = FirebaseStorage.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    private val PICK_IMAGE_REQUEST = 1
-    private var selectedImageUri: Uri? = null
+    private var isEditMode = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,65 +39,60 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     ): View? {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
 
-        // Set up the profile picture click listener
-        binding.profileImage.setOnClickListener {
-            openImagePicker()
-        }
+        // Load user data when the fragment is created
+        loadUserProfile()
 
-        // Set up save button listener
-        binding.saveBtn.setOnClickListener {
-            saveProfile()
+        // Set up button click listener
+        binding.editSaveButton.setOnClickListener {
+            if (isEditMode) {
+                saveProfile() // Save changes when in edit mode
+            } else {
+                enterEditMode() // Enter edit mode
+            }
         }
 
         return binding.root
     }
 
-    private fun openImagePicker() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, PICK_IMAGE_REQUEST)
-    }
+    private fun loadUserProfile() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val user = userRepository.getUserProfile()
+            requireActivity().runOnUiThread {
+                if (user != null) {
+                    // Display user info
+                    binding.etFirstName.setText(user.name)
+                    binding.etAge.setText(user.age.toString())
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
-            selectedImageUri = data?.data
-            binding.profileImage.setImageURI(selectedImageUri) // Preview the selected image
-        }
-    }
+                    // Always set the placeholder image for the profile picture
+                    binding.profileImage.setImageResource(R.drawable.chefs)
 
-    private fun uploadImageToFirebase() {
-        val userId = auth.currentUser?.uid ?: return
-        if (selectedImageUri != null) {
-            val fileName = "profilePictures/$userId/${UUID.randomUUID()}.jpg"
-            val storageRef = storage.reference.child(fileName)
-
-            storageRef.putFile(selectedImageUri!!).addOnSuccessListener {
-                storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    updateUserProfilePicture(uri.toString())
+                    exitEditMode() // Start in view mode
+                } else {
+                    Toast.makeText(requireContext(), "Failed to load user data", Toast.LENGTH_SHORT).show()
                 }
-            }.addOnFailureListener {
-                Toast.makeText(requireContext(), "Image upload failed: ${it.message}", Toast.LENGTH_SHORT).show()
             }
-        } else {
-            Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun updateUserProfilePicture(imageUrl: String) {
+    private fun saveProfile() {
+        // Since the profile picture cannot be changed, just update other user info
+        updateUserProfile()
+    }
+
+    private fun updateUserProfile() {
         CoroutineScope(Dispatchers.IO).launch {
             val success = userRepository.addOrUpdateUser(
                 User(
-                    id = "",
+                    id = "",  // This might not be used here, make sure it's required
                     userId = auth.currentUser?.uid ?: "",
                     name = binding.etFirstName.text.toString(),
                     age = binding.etAge.text.toString().toIntOrNull() ?: 0,
-                    profilePicture = imageUrl
                 )
             )
             requireActivity().runOnUiThread {
                 if (success) {
-                    Toast.makeText(requireContext(), "Profile updated with picture", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Profile updated", Toast.LENGTH_SHORT).show()
+                    exitEditMode() // Return to view mode
                 } else {
                     Toast.makeText(requireContext(), "Failed to update profile", Toast.LENGTH_SHORT).show()
                 }
@@ -101,8 +100,17 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
     }
 
-    private fun saveProfile() {
-        // Upload the image when the user clicks "Save"
-        uploadImageToFirebase()
+    private fun enterEditMode() {
+        isEditMode = true
+        binding.editSaveButton.text = "Save"
+        binding.etFirstName.isEnabled = true
+        binding.etAge.isEnabled = true
+    }
+
+    private fun exitEditMode() {
+        isEditMode = false
+        binding.editSaveButton.text = "Edit"
+        binding.etFirstName.isEnabled = false
+        binding.etAge.isEnabled = false
     }
 }

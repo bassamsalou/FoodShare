@@ -33,5 +33,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+    <activity
+            android:name=".SignUpActivity"
+            android:exported="true"
+            android:label="Sign In"
+            android:theme="@style/Theme.FoodShare">
+
+    </activity>
     </application>
 </manifest>

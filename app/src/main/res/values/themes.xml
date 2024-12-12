@@ -1,10 +1,10 @@
 <resources>
 
     <style name="Theme.FoodShare" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-     ´´
+        ...
     </style>
 
-´´    <style name="InnerFieldStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <style name="InnerFieldStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:textColor">@color/black</item>
         <item name="android:textColorHint">@color/black</item>
         <item name="android:maxLines">1</item>
@@ -12,10 +12,21 @@
         <item name="android:singleLine">true</item>
     </style>
 
-
-    <!-- Style for the outer text input layout -->
     <style name="OuterFieldStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:layout_marginTop">15dp</item>
         <item name="android:layout_marginBottom">15dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/black</item>
+    </style>
+
+    <style name="CircularImageWithBorder">
+        <item name="shapeAppearanceOverlay">@style/CircularShape</item>
+    </style>
+
+    <style name="CircularShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+        <item name="strokeColor">@color/black</item>
+        <item name="strokeWidth">2dp</item>
     </style>
 </resources>
