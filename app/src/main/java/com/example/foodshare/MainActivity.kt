@@ -23,16 +23,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.foodshare.data.MealRepository
 import com.example.foodshare.data.UserRepository
 import com.example.foodshare.ui.theme.FoodShareTheme
-<<<<<<< Updated upstream
 import com.google.firebase.auth.FirebaseAuth
-=======
-import androidx.compose.ui.Modifier
 import com.example.foodshare.data.DishesRepository
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodshare.ui.ViewDishesScreen
 
 
->>>>>>> Stashed changes
 
 class MainActivity : ComponentActivity() {
 
