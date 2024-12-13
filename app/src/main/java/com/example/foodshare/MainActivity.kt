@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -22,7 +23,16 @@ import androidx.navigation.compose.rememberNavController
 import com.example.foodshare.data.MealRepository
 import com.example.foodshare.data.UserRepository
 import com.example.foodshare.ui.theme.FoodShareTheme
+<<<<<<< Updated upstream
 import com.google.firebase.auth.FirebaseAuth
+=======
+import androidx.compose.ui.Modifier
+import com.example.foodshare.data.DishesRepository
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.foodshare.ui.ViewDishesScreen
+
+
+>>>>>>> Stashed changes
 
 class MainActivity : ComponentActivity() {
 
@@ -30,11 +40,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val mealRepository = MealRepository()
         val userRepository = UserRepository()
+        val dishesRepository = DishesRepository()
 
         setContent {
             FoodShareTheme {
                 val navController = rememberNavController()
-                MainScreen(navController, mealRepository, userRepository)
+                MainScreen(navController, mealRepository, userRepository, dishesRepository)
             }
         }
     }
@@ -44,7 +55,8 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(
     navController: NavHostController,
     mealRepository: MealRepository,
-    userRepository: UserRepository
+    userRepository: UserRepository,
+    dishesRepository: DishesRepository
 ) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) }
@@ -54,7 +66,7 @@ fun MainScreen(
             startDestination = "view_meals",
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("view_meals") { ViewMealsScreen(mealRepository) }
+            composable("view_meals") { ViewDishesScreen(dishesRepository) }
             composable("add_meal") { AddMealsScreen(mealRepository) }
             composable("buy_meals") {
                 BuyMealsScreen(
@@ -88,7 +100,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 
     NavigationBar {
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Home, contentDescription = "View Meals") },
+            icon = { Icon(Icons.Default.Search, contentDescription = "View Meals") },
             label = { Text("View Meals") },
             selected = currentRoute == "view_meals",
             onClick = { navController.navigate("view_meals") }

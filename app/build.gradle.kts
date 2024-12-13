@@ -57,6 +57,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.2")
 
+
     // Jetpack Compose libraries
     implementation(platform("androidx.compose:compose-bom:2023.09.01"))
     implementation("androidx.compose.ui:ui")
@@ -73,6 +74,15 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
 
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material3)
+
+    // Lifecycle for ViewModel integration with Compose
+    implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.hilt.android)
+    implementation(libs.lifecycle.viewmodel.compose)
+    // Coil for image loading in Compose
+    implementation(libs.coil.compose)
     // Testing libraries
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
