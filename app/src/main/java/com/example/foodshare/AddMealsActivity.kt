@@ -58,7 +58,10 @@ fun AddMealsScreen(mealRepository: MealRepository) {
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Add Meal") })
+            TopAppBar(
+                title = { Text("Add Meal", style = MaterialTheme.typography.headlineLarge) },
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
+            )
         },
         content = { padding ->
             Column(

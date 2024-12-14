@@ -62,7 +62,9 @@ fun SignUpScreen(
 
     var name by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
+    var phone by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
 
@@ -94,6 +96,13 @@ fun SignUpScreen(
                         )
 
                         OutlinedTextField(
+                            value = phone,
+                            onValueChange = { phone = it },
+                            label = { Text("Phone") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        OutlinedTextField(
                             value = age,
                             onValueChange = { age = it },
                             label = { Text("Age") },
@@ -107,6 +116,13 @@ fun SignUpScreen(
                             label = { Text("Email") },
                             modifier = Modifier.fillMaxWidth(),
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
+                        )
+
+                        OutlinedTextField(
+                            value = address,
+                            onValueChange = { address = it },
+                            label = { Text("Address") },
+                            modifier = Modifier.fillMaxWidth()
                         )
 
                         OutlinedTextField(
@@ -129,7 +145,10 @@ fun SignUpScreen(
                                                     if (task.isSuccessful) {
                                                         val user = User(
                                                             name = name,
-                                                            age = ageInt
+                                                            age = ageInt,
+                                                            address = address,
+                                                            phone = phone,
+                                                            email = email,
                                                         )
                                                         coroutineScope.launch {
                                                             val success = userRepository.addOrUpdateUser(user)

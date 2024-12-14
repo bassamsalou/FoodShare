@@ -79,7 +79,12 @@ fun BuyMealsScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Buy Meals") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Buy Meals", style = MaterialTheme.typography.headlineLarge) },
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
+            )
+        },
         content = { padding ->
             if (isLoading) {
                 Box(

@@ -70,7 +70,10 @@ fun SignInScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Sign In") })
+            TopAppBar(
+                title = { Text("Sign In", style = MaterialTheme.typography.headlineLarge) },
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
+            )
         },
         content = { padding ->
             Box(

@@ -40,4 +40,17 @@ class UserRepository {
             null
         }
     }
+
+    // Delete user profile
+    suspend fun deleteUserProfile(): Boolean {
+        val userId = auth.currentUser?.uid ?: return false
+        return try {
+            usersCollection.document(userId).delete().await()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
 }
