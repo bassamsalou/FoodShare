@@ -56,3 +56,4 @@ analytics-debug.log
 .gradle/8.*/
 
 *.DS_Store
+.gradle/8.7/fileHashes/fileHashes.lock
