@@ -8,10 +8,30 @@ import java.net.URL
 
 class DishesRepository {
 
-    private val apiBaseUrl = "https://www.themealdb.com/api/json/v1/1/search.php?s="
+    private val apiBaseUrl = "https://www.themealdb.com/api/json/v1/1/"
+
+    suspend fun getDishDetails(dishId: String): Dishes? = withContext(Dispatchers.IO) {
+        val url = URL("${apiBaseUrl}lookup.php?i=$dishId")
+        val connection = url.openConnection() as HttpURLConnection
+
+        return@withContext try {
+            connection.connect()
+            val responseStream = connection.inputStream.bufferedReader().use { it.readText() }
+            val jsonResponse = JSONObject(responseStream)
+            val dishesArray = jsonResponse.optJSONArray("meals")
+
+            dishesArray?.let {
+                val dishObject = it.getJSONObject(0)
+                val dishMap = dishObject.toMap()
+                Dishes.fromApiResponse(dishMap)
+            }
+        } finally {
+            connection.disconnect()
+        }
+    }
 
     suspend fun searchDishes(query: String): List<Dishes> = withContext(Dispatchers.IO) {
-        val url = URL("$apiBaseUrl$query")
+        val url = URL("${apiBaseUrl}search.php?s=$query")
         val connection = url.openConnection() as HttpURLConnection
 
         return@withContext try {

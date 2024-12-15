@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -22,13 +21,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.foodshare.data.MealRepository
 import com.example.foodshare.data.UserRepository
+import com.example.foodshare.data.DishesRepository
+import com.example.foodshare.DishDetailsScreen
+import com.example.foodshare.ui.ViewDishesScreen
 import com.example.foodshare.ui.theme.FoodShareTheme
 import com.google.firebase.auth.FirebaseAuth
-import com.example.foodshare.data.DishesRepository
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.foodshare.ui.ViewDishesScreen
-
-
 
 class MainActivity : ComponentActivity() {
 
@@ -47,6 +44,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun MainScreen(
     navController: NavHostController,
@@ -54,6 +52,7 @@ fun MainScreen(
     userRepository: UserRepository,
     dishesRepository: DishesRepository
 ) {
+
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) }
     ) { innerPadding ->
@@ -62,8 +61,30 @@ fun MainScreen(
             startDestination = "view_meals",
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("view_meals") { ViewDishesScreen(dishesRepository) }
-            composable("add_meal") { AddMealsScreen(mealRepository) }
+            // View meals screen
+            composable("view_meals") {
+                ViewDishesScreen(
+                    dishesRepository = dishesRepository,
+                    navController = navController
+                )
+            }
+
+            // Dish details screen
+            composable("dish_details/{dishId}") { backStackEntry ->
+                val dishId = backStackEntry.arguments?.getString("dishId") ?: ""
+                DishDetailsScreen(
+                    dishId = dishId,
+                    dishesRepository = dishesRepository,
+                    navController = navController
+                )
+            }
+
+            // Add meal screen
+            composable("add_meal") {
+                AddMealsScreen(mealRepository = mealRepository)
+            }
+
+            // Buy meals screen
             composable("buy_meals") {
                 BuyMealsScreen(
                     mealRepository = mealRepository,
@@ -74,16 +95,17 @@ fun MainScreen(
                     }
                 )
             }
-            composable("meal_details/{mealId}") { backStackEntry ->
-                val mealId = backStackEntry.arguments?.getString("mealId") ?: ""
-                MealDetailsScreen(mealId, mealRepository, navController)
-            }
+
+            // Profile screen
             composable("profile") {
-                ProfileScreen(userRepository = userRepository, onLogout = {
-                    FirebaseAuth.getInstance().signOut()
-                    val intent = Intent(navController.context, SignInActivity::class.java)
-                    navController.context.startActivity(intent)
-                })
+                ProfileScreen(
+                    userRepository = userRepository,
+                    onLogout = {
+                        FirebaseAuth.getInstance().signOut()
+                        val intent = Intent(navController.context, SignInActivity::class.java)
+                        navController.context.startActivity(intent)
+                    }
+                )
             }
         }
     }
@@ -95,29 +117,47 @@ fun BottomNavigationBar(navController: NavHostController) {
     val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar {
+        // Navigation bar items
         NavigationBarItem(
             icon = { Icon(Icons.Default.Search, contentDescription = "View Meals") },
             label = { Text("View Meals") },
             selected = currentRoute == "view_meals",
-            onClick = { navController.navigate("view_meals") }
+            onClick = {
+                // Prevent navigating to the same screen again
+                if (currentRoute != "view_meals") {
+                    navController.navigate("view_meals")
+                }
+            }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.Add, contentDescription = "Add Meal") },
             label = { Text("Add Meal") },
             selected = currentRoute == "add_meal",
-            onClick = { navController.navigate("add_meal") }
+            onClick = {
+                if (currentRoute != "add_meal") {
+                    navController.navigate("add_meal")
+                }
+            }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Buy Meal") },
             label = { Text("Buy Meal") },
             selected = currentRoute == "buy_meals",
-            onClick = { navController.navigate("buy_meals") }
+            onClick = {
+                if (currentRoute != "buy_meals") {
+                    navController.navigate("buy_meals")
+                }
+            }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
             label = { Text("Profile") },
             selected = currentRoute == "profile",
-            onClick = { navController.navigate("profile") }
+            onClick = {
+                if (currentRoute != "profile") {
+                    navController.navigate("profile")
+                }
+            }
         )
     }
 }

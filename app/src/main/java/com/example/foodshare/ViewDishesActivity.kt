@@ -1,5 +1,6 @@
 package com.example.foodshare.ui
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,34 +15,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.foodshare.data.Dishes
 import com.example.foodshare.data.DishesRepository
-import com.example.foodshare.data.ViewDishes
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.foodshare.DishDetailsScreen
 
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
-fun ViewDishesScreen(dishesRepository: DishesRepository) {
+fun ViewDishesScreen(
+    dishesRepository: DishesRepository,
+    navController: NavHostController
+) {
     var query by remember { mutableStateOf("") }
     var dishesList by remember { mutableStateOf<List<Dishes>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    suspend fun searchDishes() {
-        isLoading = true
-        errorMessage = null
-        try {
-            dishesList = dishesRepository.searchDishes(query)
-        } catch (e: Exception) {
-            errorMessage = "Error: ${e.message}"
-        } finally {
-            isLoading = false
-        }
-    }
+    val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.padding(16.dp)) {
         Row(
@@ -59,8 +56,16 @@ fun ViewDishesScreen(dishesRepository: DishesRepository) {
 
             Button(
                 onClick = {
-                    kotlinx.coroutines.GlobalScope.launch {
-                        searchDishes()
+                    coroutineScope.launch {
+                        isLoading = true
+                        errorMessage = null
+                        try {
+                            dishesList = dishesRepository.searchDishes(query)
+                        } catch (e: Exception) {
+                            errorMessage = "Error: ${e.message}"
+                        } finally {
+                            isLoading = false
+                        }
                     }
                 },
                 modifier = Modifier.size(50.dp),
@@ -83,7 +88,9 @@ fun ViewDishesScreen(dishesRepository: DishesRepository) {
         } else {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(dishesList) { dish ->
-                    DishesListItem(dish = dish)
+                    DishesListItem(dish = dish) {
+                        navController.navigate("dish_details/${Uri.encode(dish.idDish)}")
+                    }
                 }
             }
         }
@@ -91,14 +98,12 @@ fun ViewDishesScreen(dishesRepository: DishesRepository) {
 }
 
 @Composable
-fun DishesListItem(dish: Dishes) {
+fun DishesListItem(dish: Dishes, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable {
-                // Handle dish click (e.g., navigate to a detailed screen)
-            }
+            .clickable { onClick() }
     ) {
         Image(
             painter = rememberAsyncImagePainter(dish.thumbnail),
@@ -118,3 +123,7 @@ fun DishesListItem(dish: Dishes) {
         }
     }
 }
+
+
+
+
