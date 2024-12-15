@@ -1,37 +1,25 @@
 package com.example.foodshare
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
 import com.example.foodshare.data.User
 import com.example.foodshare.data.UserRepository
 import com.example.foodshare.ui.theme.FoodShareTheme
@@ -106,60 +94,27 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
             )
         },
         content = { padding ->
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(24.dp)
-                    .verticalScroll(rememberScrollState()) // Make the column scrollable
-                    .background(MaterialTheme.colorScheme.background)
             ) {
                 // Background Image
                 Image(
-                    painter = painterResource(id = R.drawable.background2),
+                    painter = painterResource(id = R.drawable.background2), // Replace with your background image
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
 
-                // Foreground content
+                // Foreground Content
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp)
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(rememberScrollState()) // Make the column scrollable
                 ) {
-                    // Profile picture centered
-                    Box(
-                        modifier = Modifier
-                            .size(120.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surface)
-                            .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                            .align(Alignment.CenterHorizontally),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (profilePictureUri != null) {
-                            Image(
-                                painter = rememberImagePainter(profilePictureUri),
-                                contentDescription = "Profile Picture",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        } else if (profilePictureUrl.isNotBlank()) {
-                            // Load image from URL
-                            Image(
-                                painter = rememberImagePainter(profilePictureUrl),
-                                contentDescription = "Profile Picture from URL",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        } else {
-                            isEditMode = true
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // Name field
                     if (isEditMode) {
@@ -168,7 +123,7 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                         ProfileInfoRow(label = "Name", value = name)
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
 
                     // Age field
                     if (isEditMode) {
@@ -177,7 +132,7 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                         ProfileInfoRow(label = "Age", value = age)
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
 
                     // Address field
                     if (isEditMode) {
@@ -186,7 +141,7 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                         ProfileInfoRow(label = "Address", value = address)
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
 
                     // Phone field
                     if (isEditMode) {
@@ -195,7 +150,7 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                         ProfileInfoRow(label = "Phone", value = phone)
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
 
                     // Email field
                     if (isEditMode) {
@@ -218,8 +173,7 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                                             age = age.toIntOrNull() ?: 0,
                                             address = address,
                                             phone = phone,
-                                            email = email,
-                                            profilePictureUri = profilePictureUri
+                                            email = email
                                         )
                                     )
                                     if (success) {
@@ -241,7 +195,7 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Logout button with a red color
+                    // Logout button
                     ElevatedButton(
                         onClick = { onLogout() },
                         modifier = Modifier.fillMaxWidth(),
@@ -251,68 +205,27 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                         Text("Logout", color = Color.White)
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Logout button with a red color
-                ElevatedButton(
-                    onClick = { onLogout() },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                    shape = MaterialTheme.shapes.medium
-                ) {
-                    Text("Logout", color = Color.White)
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Delete profile button in edit mode
-                var showConfirmationDialog by remember { mutableStateOf(false) }
-
-                if (isEditMode) {
-                    ElevatedButton(
-                        onClick = { showConfirmationDialog = true },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
-                        shape = MaterialTheme.shapes.medium
-                    ) {
-                        Text("Delete Profile", color = Color.White)
-                    }
-
-                    if (showConfirmationDialog) {
-                        AlertDialog(
-                            onDismissRequest = { showConfirmationDialog = false },
-                            title = { Text("Confirm Delete") },
-                            text = { Text("Are you sure you want to delete your profile?") },
-                            confirmButton = {
-                                TextButton(
-                                    onClick = {
-                                        showConfirmationDialog = false
-                                        coroutineScope.launch {
-                                            val isDeleted = userRepository.deleteUserProfile()
-                                            if (isDeleted) {
-                                                onLogout() // Log out user after successful deletion
-                                            } else {
-                                                toastMessage = "Failed to delete profile."
-                                            }
-                                        }
+                    if (isEditMode) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        ElevatedButton(
+                            onClick = {
+                                coroutineScope.launch {
+                                    val isDeleted = userRepository.deleteUserProfile()
+                                    if (isDeleted) {
+                                        onLogout() // Log out user after successful deletion
+                                    } else {
+                                        toastMessage = "Failed to delete profile."
                                     }
-                                ) {
-                                    Text("Delete")
                                 }
                             },
-                            dismissButton = {
-                                TextButton(onClick = { showConfirmationDialog = false }) {
-                                    Text("Cancel")
-                                }
-                            }
-                        )
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                            shape = MaterialTheme.shapes.medium
+                        ) {
+                            Text("Delete Profile", color = Color.White)
+                        }
                     }
-
                 }
-
             }
         }
     )
@@ -351,7 +264,7 @@ fun EditableField(label: String, value: String, onValueChange: (String) -> Unit)
         label = { Text(label) },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(vertical = 8.dp),
         singleLine = true,
         shape = MaterialTheme.shapes.medium
     )
