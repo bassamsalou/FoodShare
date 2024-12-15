@@ -116,50 +116,50 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                 ) {
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Name field
-                    if (isEditMode) {
-                        EditableField(label = "Name", value = name, onValueChange = { name = it })
-                    } else {
-                        ProfileInfoRow(label = "Name", value = name)
-                    }
+                // Name field
+                if (isEditMode){
+                    EditableField(label = "Name", value = name, onValueChange = { name = it })
+                } else {
+                    ProfileInfoRow(label = "Name", value = name)
+                }
 
                     Spacer(modifier = Modifier.height(2.dp))
 
-                    // Age field
-                    if (isEditMode) {
-                        EditableField(label = "Age", value = age, onValueChange = { age = it })
-                    } else {
-                        ProfileInfoRow(label = "Age", value = age)
-                    }
+                // Age field
+                if (isEditMode) {
+                    EditableField(label = "Age", value = age, onValueChange = { age = it })
+                } else {
+                    ProfileInfoRow(label = "Age", value = age)
+                }
 
                     Spacer(modifier = Modifier.height(2.dp))
 
-                    // Address field
-                    if (isEditMode) {
-                        EditableField(label = "Address", value = address, onValueChange = { address = it })
-                    } else {
-                        ProfileInfoRow(label = "Address", value = address)
-                    }
+                // Address field
+                if (isEditMode) {
+                    EditableField(label = "Address", value = address, onValueChange = { address = it })
+                } else {
+                    ProfileInfoRow(label = "Address", value = address)
+                }
 
                     Spacer(modifier = Modifier.height(2.dp))
 
-                    // Phone field
-                    if (isEditMode) {
-                        EditableField(label = "Phone", value = phone, onValueChange = { phone = it })
-                    } else {
-                        ProfileInfoRow(label = "Phone", value = phone)
-                    }
+                // Phone field
+                if (isEditMode) {
+                    EditableField(label = "Phone", value = phone, onValueChange = { phone = it })
+                } else {
+                    ProfileInfoRow(label = "Phone", value = phone)
+                }
 
                     Spacer(modifier = Modifier.height(2.dp))
 
-                    // Email field
-                    if (isEditMode) {
-                        EditableField(label = "Email", value = email, onValueChange = { email = it })
-                    } else {
-                        ProfileInfoRow(label = "Email", value = email)
-                    }
+                // Email field
+                if (isEditMode) {
+                    EditableField(label = "Email", value = email, onValueChange = { email = it })
+                } else {
+                    ProfileInfoRow(label = "Email", value = email)
+                }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                     // Save button
                     ElevatedButton(

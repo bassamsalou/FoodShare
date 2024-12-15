@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -22,12 +23,11 @@ import com.example.foodshare.data.DishesRepository
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.foodshare.DishDetailsScreen
+import com.example.foodshare.R
 
-@OptIn(DelicateCoroutinesApi::class)
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewDishesScreen(
     dishesRepository: DishesRepository,
@@ -40,63 +40,104 @@ fun ViewDishesScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Background image
+        Image(
+            painter = painterResource(id = R.drawable.background2),
+            contentDescription = "Background Image",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        // Content over the background
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize()
+                .wrapContentSize(Alignment.TopStart)
         ) {
-            OutlinedTextField(
-                value = query,
-                onValueChange = { text -> query = text },
-                modifier = Modifier.weight(1f),
-                label = { Text("Search Meals") }
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Button(
-                onClick = {
-                    coroutineScope.launch {
-                        isLoading = true
-                        errorMessage = null
-                        try {
-                            dishesList = dishesRepository.searchDishes(query)
-                        } catch (e: Exception) {
-                            errorMessage = "Error: ${e.message}"
-                        } finally {
-                            isLoading = false
-                        }
-                    }
-                },
-                modifier = Modifier.size(50.dp),
-                contentPadding = PaddingValues(0.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(Icons.Default.Search, contentDescription = "Search Icon")
+                // Outlined TextField with black text and hint (uses your defined XML styles)
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = { text -> query = text },
+                    modifier = Modifier.weight(1f),
+                    label = {
+                        Text(
+                            "Search Meals",
+                            color = Color.Black
+                        )
+                    },  // Label text color is black
+                    placeholder = {
+                        Text(
+                            "Search Meals",
+                            color = Color.Black
+                        )
+                    },  // Hint text color is black
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedLabelColor = Color.Black,
+                        unfocusedLabelColor = Color.Black,
+                        focusedBorderColor = Color.Black,
+                        unfocusedBorderColor = Color.Black,
+                        focusedTextColor = Color.Black,
+                        unfocusedSupportingTextColor = Color.Black,
+
+                        disabledTextColor = Color.Black,
+                        cursorColor = Color.Black
+                    )
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Button(
+                    onClick = {
+                        coroutineScope.launch {
+                            isLoading = true
+                            errorMessage = null
+                            try {
+                                dishesList = dishesRepository.searchDishes(query)
+                            } catch (e: Exception) {
+                                errorMessage = "Error: ${e.message}"
+                            } finally {
+                                isLoading = false
+                            }
+                        }
+                    },
+                    modifier = Modifier.size(50.dp),
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    Icon(Icons.Default.Search, contentDescription = "Search Icon")
+                }
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-        } else if (errorMessage != null) {
-            Text(
-                text = errorMessage ?: "",
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-        } else {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(dishesList) { dish ->
-                    DishesListItem(dish = dish) {
-                        navController.navigate("dish_details/${Uri.encode(dish.idDish)}")
+            if (isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            } else if (errorMessage != null) {
+                Text(
+                    text = errorMessage ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
+                )
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(dishesList) { dish ->
+                        DishesListItem(dish = dish) {
+                            navController.navigate("dish_details/${Uri.encode(dish.idDish)}")
+                        }
                     }
                 }
             }
         }
     }
 }
-
 @Composable
 fun DishesListItem(dish: Dishes, onClick: () -> Unit) {
     Row(
@@ -114,16 +155,16 @@ fun DishesListItem(dish: Dishes, onClick: () -> Unit) {
             contentScale = ContentScale.Crop
         )
         Column {
-            Text(text = dish.name, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = dish.name,
+                style = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
+            )  // Make text black
             Text(
                 text = "${dish.category ?: "Unknown"} | ${dish.area ?: "Unknown"}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)  // Make text black
             )
         }
     }
 }
-
-
 
 
