@@ -4,14 +4,18 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
 import com.example.foodshare.data.Meal
 import com.example.foodshare.data.MealRepository
 import com.example.foodshare.ui.theme.FoodShareTheme
@@ -43,7 +47,7 @@ fun AddMealsScreen(mealRepository: MealRepository) {
     var calories by remember { mutableStateOf("") }
     var protein by remember { mutableStateOf("") }
     var price by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("")}
+    var address by remember { mutableStateOf("") }
 
     // State to show toast messages
     var toastMessage by remember { mutableStateOf<String?>(null) }
@@ -64,90 +68,157 @@ fun AddMealsScreen(mealRepository: MealRepository) {
             )
         },
         content = { padding ->
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Input fields for meal details
-                OutlinedTextField(
-                    value = foodName,
-                    onValueChange = { foodName = it },
-                    label = { Text("Food Name") },
-                    modifier = Modifier.fillMaxWidth()
+                // Background Image
+                Image(
+                    painter = painterResource(id = R.drawable.background2),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
                 )
 
-                OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Text("Description") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                OutlinedTextField(
-                    value = calories,
-                    onValueChange = { calories = it },
-                    label = { Text("Calories") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-                )
-
-                OutlinedTextField(
-                    value = protein,
-                    onValueChange = { protein = it },
-                    label = { Text("Protein (g)") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-                )
-
-                OutlinedTextField(
-                    value = price,
-                    onValueChange = { price = it },
-                    label = { Text("Price (dkk)") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-                )
-
-                OutlinedTextField(
-                    value = address,
-                    onValueChange = { address = it },
-                    label = { Text("Address") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-                )
-
-                // Add Meal button
-                Button(
-                    onClick = {
-                        coroutineScope.launch {
-                            val newMeal = Meal(
-                                foodName = foodName,
-                                description = description,
-                                calories = calories,
-                                protein = protein,
-                                price = price,
-                                address = address
-                            )
-                            val success = mealRepository.addMeal(newMeal)
-                            toastMessage = if (success) {
-                                // Reset fields
-                                foodName = ""
-                                description = ""
-                                calories = ""
-                                protein = ""
-                                price = ""
-                                address = ""
-                                "Meal added successfully!"
-                            } else {
-                                "Failed to add meal. Try again."
-                            }
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
+                // Foreground content
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Text("Add Meal")
+                    // Input fields for meal details
+                    OutlinedTextField(
+                        value = foodName,
+                        onValueChange = { foodName = it },
+                        label = { Text("Food Name") },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color.White, // White fill for input
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                            focusedLabelColor = Color.Black,
+                            unfocusedLabelColor = Color.Black,
+                            cursorColor = Color.Black
+                        )
+                    )
+
+                    OutlinedTextField(
+                        value = description,
+                        onValueChange = { description = it },
+                        label = { Text("Description") },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color.White,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                            focusedLabelColor = Color.Black,
+                            unfocusedLabelColor = Color.Black,
+                            cursorColor = Color.Black
+                        )
+                    )
+
+                    OutlinedTextField(
+                        value = calories,
+                        onValueChange = { calories = it },
+                        label = { Text("Calories") },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color.White,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                            focusedLabelColor = Color.Black,
+                            unfocusedLabelColor = Color.Black,
+                            cursorColor = Color.Black
+                        )
+                    )
+
+                    OutlinedTextField(
+                        value = protein,
+                        onValueChange = { protein = it },
+                        label = { Text("Protein (g)") },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color.White,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                            focusedLabelColor = Color.Black,
+                            unfocusedLabelColor = Color.Black,
+                            cursorColor = Color.Black
+                        )
+                    )
+
+                    OutlinedTextField(
+                        value = price,
+                        onValueChange = { price = it },
+                        label = { Text("Price (dkk)") },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color.White,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                            focusedLabelColor = Color.Black,
+                            unfocusedLabelColor = Color.Black,
+                            cursorColor = Color.Black
+                        )
+                    )
+
+                    OutlinedTextField(
+                        value = address,
+                        onValueChange = { address = it },
+                        label = { Text("Address") },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color.White,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                            focusedLabelColor = Color.Black,
+                            unfocusedLabelColor = Color.Black,
+                            cursorColor = Color.Black
+                        )
+                    )
+
+                    // Add Meal button
+                    Button(
+                        onClick = {
+                            coroutineScope.launch {
+                                val newMeal = Meal(
+                                    foodName = foodName,
+                                    description = description,
+                                    calories = calories,
+                                    protein = protein,
+                                    price = price,
+                                    address = address
+                                )
+                                val success = mealRepository.addMeal(newMeal)
+                                toastMessage = if (success) {
+                                    // Reset fields
+                                    foodName = ""
+                                    description = ""
+                                    calories = ""
+                                    protein = ""
+                                    price = ""
+                                    address = ""
+                                    "Meal added successfully!"
+                                } else {
+                                    "Failed to add meal. Try again."
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Add Meal")
+                    }
                 }
             }
         }

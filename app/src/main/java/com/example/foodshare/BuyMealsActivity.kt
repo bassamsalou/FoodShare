@@ -3,6 +3,8 @@ package com.example.foodshare
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,7 +14,11 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -86,29 +92,35 @@ fun BuyMealsScreen(
             )
         },
         content = { padding ->
-            if (isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = androidx.compose.ui.Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                ) {
-                    items(meals) { meal ->
-                        MealCard(meal = meal, onClick = { onMealClick(meal) })
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.background2),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.align(androidx.compose.ui.Alignment.Center))
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(vertical = 16.dp)
+                    ) {
+                        items(meals) { meal ->
+                            MealCard(meal = meal, onClick = { onMealClick(meal) })
+                        }
                     }
                 }
             }
         }
     )
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,65 +138,129 @@ fun MealDetailsScreen(mealId: String, mealRepository: MealRepository, navControl
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Meal Details") },
+                title = { Text("Meal Details", style = MaterialTheme.typography.titleMedium, color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
+                            tint = Color.White
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))
             )
         },
         content = { padding ->
-            if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                // Background Image
+                Image(
+                    painter = painterResource(id = R.drawable.background2),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+
+                // Foreground Content
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(padding),
+                        .padding(16.dp),
                     contentAlignment = androidx.compose.ui.Alignment.Center
                 ) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                meal?.let {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding)
-                            .padding(16.dp)
-                    ) {
-                        Text("Name: ${it.foodName}", style = MaterialTheme.typography.titleLarge)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Description: ${it.description}")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Calories: ${it.calories}")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Protein: ${it.protein}")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Price: dkk${it.price}")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Address: ${it.address}")
+                    if (isLoading) {
+                        CircularProgressIndicator()
+                    } else {
+                        meal?.let {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(),
+                                elevation = CardDefaults.cardElevation(8.dp),
+                                colors = CardDefaults.cardColors(containerColor = Color.White)
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Text(
+                                        text = "Name: ${it.foodName}",
+                                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 24.sp),
+                                        color = Color.Black
+                                    )
+                                    Text(
+                                        text = "Description: ${it.description}",
+                                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                                        color = Color.Gray
+                                    )
+                                    Text(
+                                        text = "Calories: ${it.calories}",
+                                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                                        color = Color.Black
+                                    )
+                                    Text(
+                                        text = "Protein: ${it.protein}",
+                                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                                        color = Color.Black
+                                    )
+                                    Text(
+                                        text = "Price: ${it.price} kr",
+                                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                                        color = Color.Black
+                                    )
+                                    Text(
+                                        text = "Address: ${it.address}",
+                                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                                        color = Color.Black
+                                    )
+                                }
+                            }
+                        } ?: Text(
+                            text = "Meal not found.",
+                            color = Color.Black,
+                            style = MaterialTheme.typography.titleMedium
+                        )
                     }
-                } ?: Text("Meal not found.")
+                }
             }
         }
     )
 }
+
 
 @Composable
 fun MealCard(meal: Meal, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White) // Set card background to white
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = meal.foodName, style = MaterialTheme.typography.titleMedium)
-            Text(text = "Price: dkk${meal.price}")
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = meal.foodName,
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
+                color = Color.Black
+            )
+            Text(
+                text = "Price: ${meal.price} kr",
+                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
+                color = Color.Gray
+            )
         }
     }
 }

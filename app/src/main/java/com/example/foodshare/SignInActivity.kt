@@ -5,12 +5,17 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.foodshare.ui.theme.FoodShareTheme
@@ -69,42 +74,68 @@ fun SignInScreen(
     var isLoading by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Sign In", style = MaterialTheme.typography.headlineLarge) },
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
-            )
-        },
         content = { padding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = androidx.compose.ui.Alignment.Center
+                    .padding(padding)
             ) {
+                // Background Image
+                Image(
+                    painter = painterResource(id = R.drawable.signin_screen),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+
+                // Foreground Content
                 if (isLoading) {
-                    CircularProgressIndicator()
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 } else {
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                            .fillMaxSize()
+                            .padding(horizontal = 24.dp)
+                            .padding(bottom = 24.dp),
+                        verticalArrangement = Arrangement.Bottom, // Move content towards the bottom
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        // Content
                         OutlinedTextField(
                             value = email,
                             onValueChange = { email = it },
                             label = { Text("Email") },
-                            modifier = Modifier.fillMaxWidth(),
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                containerColor = Color.White,
+                                focusedBorderColor = Color.Blue,
+                                unfocusedBorderColor = Color.Gray
+                            )
                         )
 
                         OutlinedTextField(
                             value = password,
                             onValueChange = { password = it },
                             label = { Text("Password") },
-                            modifier = Modifier.fillMaxWidth(),
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                containerColor = Color.White,
+                                focusedBorderColor = Color.Blue,
+                                unfocusedBorderColor = Color.Gray
+                            )
                         )
 
                         Button(
@@ -134,14 +165,21 @@ fun SignInScreen(
                                     ).show()
                                 }
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
                         ) {
                             Text("Sign In")
                         }
 
-                        TextButton(onClick = onNavigateToSignUp) {
+                        TextButton(
+                            onClick = onNavigateToSignUp,
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
                             Text("Don't have an account? Sign Up")
                         }
+
+                        Spacer(modifier = Modifier.height(32.dp)) // Add extra space at the bottom
                     }
                 }
             }
