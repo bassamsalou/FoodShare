@@ -69,11 +69,8 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
     var address by remember { mutableStateOf("Address") }
     var phone by remember { mutableStateOf("Phone") }
     var email by remember { mutableStateOf("Email") }
-<<<<<<< HEAD
     var profilePictureUri by remember { mutableStateOf<Uri?>(null) }
     var profilePictureUrl by remember { mutableStateOf("") }
-=======
->>>>>>> origin/profile
     var isEditMode by remember { mutableStateOf(false) }
 
     // State for toast messages
@@ -88,7 +85,6 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
     }
 
     // Load user profile when the screen is first displayed
-<<<<<<< HEAD
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             val user = userRepository.getUserProfile()
@@ -101,20 +97,6 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                 profilePictureUri = user.profilePictureUri
             } else {
                 toastMessage = "Failed to load user data"
-=======
-        LaunchedEffect(Unit) {
-            coroutineScope.launch {
-                val user = userRepository.getUserProfile()
-                if (user != null) {
-                    name = user.name
-                    age = user.age.toString()
-                    address = user.address
-                    phone = user.phone
-                    email = user.email
-                } else {
-                    toastMessage = "Failed to load user data"
-                }
->>>>>>> origin/profile
             }
         }
     }
@@ -132,7 +114,6 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                     .fillMaxSize()
                     .padding(padding)
             ) {
-<<<<<<< HEAD
                 // Background Image
                 Image(
                     painter = painterResource(id = R.drawable.background2),
@@ -173,77 +154,6 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
                             )
-=======
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Name field
-                if (isEditMode){
-                    EditableField(label = "Name", value = name, onValueChange = { name = it })
-                } else {
-                    ProfileInfoRow(label = "Name", value = name)
-                }
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                // Age field
-                if (isEditMode) {
-                    EditableField(label = "Age", value = age, onValueChange = { age = it })
-                } else {
-                    ProfileInfoRow(label = "Age", value = age)
-                }
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                // Address field
-                if (isEditMode) {
-                    EditableField(label = "Address", value = address, onValueChange = { address = it })
-                } else {
-                    ProfileInfoRow(label = "Address", value = address)
-                }
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                // Phone field
-                if (isEditMode) {
-                    EditableField(label = "Phone", value = phone, onValueChange = { phone = it })
-                } else {
-                    ProfileInfoRow(label = "Phone", value = phone)
-                }
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                // Email field
-                if (isEditMode) {
-                    EditableField(label = "Email", value = email, onValueChange = { email = it })
-                } else {
-                    ProfileInfoRow(label = "Email", value = email)
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Save button
-                ElevatedButton(
-                    onClick = {
-                        if (isEditMode) {
-                            coroutineScope.launch {
-                                val success = userRepository.addOrUpdateUser(
-                                    User(
-                                        userId = "",
-                                        name = name,
-                                        age = age.toIntOrNull() ?: 0,
-                                        address = address,
-                                        phone = phone,
-                                        email = email
-                                    )
-                                )
-                                if (success) {
-                                    toastMessage = "Profile updated"
-                                    isEditMode = false
-                                } else {
-                                    toastMessage = "Failed to update profile"
-                                }
-                            }
->>>>>>> origin/profile
                         } else {
                             Image(
                                 imageVector = Icons.Filled.AccountCircle,
@@ -252,15 +162,6 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                                 contentScale = ContentScale.Crop
                             )
                         }
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    TextButton(
-                        onClick = { imagePickerLauncher.launch("image/*") },
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    ) {
-                        Text("Change Profile Picture", color = MaterialTheme.colorScheme.primary)
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
