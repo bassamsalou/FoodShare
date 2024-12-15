@@ -69,8 +69,6 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
     var address by remember { mutableStateOf("Address") }
     var phone by remember { mutableStateOf("Phone") }
     var email by remember { mutableStateOf("Email") }
-    var profilePictureUri by remember { mutableStateOf<Uri?>(null) }
-    var profilePictureUrl by remember { mutableStateOf("") }
     var isEditMode by remember { mutableStateOf(false) }
 
     // State for toast messages
@@ -94,7 +92,6 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                 address = user.address
                 phone = user.phone
                 email = user.email
-                profilePictureUri = user.profilePictureUri
             } else {
                 toastMessage = "Failed to load user data"
             }
@@ -109,10 +106,13 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
             )
         },
         content = { padding ->
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
+                    .padding(24.dp)
+                    .verticalScroll(rememberScrollState()) // Make the column scrollable
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 // Background Image
                 Image(
@@ -155,12 +155,7 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                                 contentScale = ContentScale.Crop
                             )
                         } else {
-                            Image(
-                                imageVector = Icons.Filled.AccountCircle,
-                                contentDescription = "Default Profile Picture",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
+                            isEditMode = true
                         }
                     }
 
@@ -258,11 +253,70 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Logout button with a red color
+                ElevatedButton(
+                    onClick = { onLogout() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Text("Logout", color = Color.White)
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Delete profile button in edit mode
+                var showConfirmationDialog by remember { mutableStateOf(false) }
+
+                if (isEditMode) {
+                    ElevatedButton(
+                        onClick = { showConfirmationDialog = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                        shape = MaterialTheme.shapes.medium
+                    ) {
+                        Text("Delete Profile", color = Color.White)
+                    }
+
+                    if (showConfirmationDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showConfirmationDialog = false },
+                            title = { Text("Confirm Delete") },
+                            text = { Text("Are you sure you want to delete your profile?") },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        showConfirmationDialog = false
+                                        coroutineScope.launch {
+                                            val isDeleted = userRepository.deleteUserProfile()
+                                            if (isDeleted) {
+                                                onLogout() // Log out user after successful deletion
+                                            } else {
+                                                toastMessage = "Failed to delete profile."
+                                            }
+                                        }
+                                    }
+                                ) {
+                                    Text("Delete")
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showConfirmationDialog = false }) {
+                                    Text("Cancel")
+                                }
+                            }
+                        )
+                    }
+
+                }
+
             }
         }
     )
 }
-
 
 @Composable
 fun ProfileInfoRow(label: String, value: String) {
@@ -270,27 +324,25 @@ fun ProfileInfoRow(label: String, value: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .background(Color.White) // White background for the row
+            .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp),
-        horizontalArrangement = Arrangement.Start,
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "$label: ",
+            text = "$label:",
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-            color = Color.Black, // Black label
-            modifier = Modifier.padding(end = 8.dp)
+            modifier = Modifier.weight(0.3f)
         )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
-            color = Color.Black // Black text for value
+            modifier = Modifier.weight(0.7f),
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditableField(label: String, value: String, onValueChange: (String) -> Unit) {
     OutlinedTextField(
@@ -299,13 +351,8 @@ fun EditableField(label: String, value: String, onValueChange: (String) -> Unit)
         label = { Text(label) },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(8.dp),
         singleLine = true,
-        textStyle = LocalTextStyle.current.copy(color = Color.Black), // Set text color here
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            containerColor = Color.White, // White background
-            focusedBorderColor = Color.Gray, // Focused border
-            unfocusedBorderColor = Color.LightGray // Unfocused border
-        )
+        shape = MaterialTheme.shapes.medium
     )
 }
