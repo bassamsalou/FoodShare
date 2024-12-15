@@ -16,7 +16,7 @@
         <activity
                 android:name=".SignInActivity"
                 android:exported="true"
-                android:label="Sign In"
+                android:label="FoodShare"
                 android:theme="@style/Theme.FoodShare">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
