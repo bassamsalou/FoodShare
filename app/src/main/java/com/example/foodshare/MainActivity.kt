@@ -29,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val mealRepository = MealRepository()
@@ -43,7 +44,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 
 @Composable
 fun MainScreen(
@@ -69,7 +69,11 @@ fun MainScreen(
                 )
             }
 
-            // Dish details screen
+            composable("meal_details/{mealId}") { backStackEntry ->
+                val mealId = backStackEntry.arguments?.getString("mealId") ?: ""
+                MealDetailsScreen(mealId, mealRepository, navController)
+            }
+
             composable("dish_details/{dishId}") { backStackEntry ->
                 val dishId = backStackEntry.arguments?.getString("dishId") ?: ""
                 DishDetailsScreen(
@@ -110,6 +114,7 @@ fun MainScreen(
         }
     }
 }
+
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
