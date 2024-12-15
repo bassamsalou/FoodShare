@@ -69,19 +69,10 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
     var address by remember { mutableStateOf("Address") }
     var phone by remember { mutableStateOf("Phone") }
     var email by remember { mutableStateOf("Email") }
-    var profilePictureUri by remember { mutableStateOf<Uri?>(null) }
-    var profilePictureUrl by remember { mutableStateOf("") }    // State for the URL input
     var isEditMode by remember { mutableStateOf(false) }
 
     // State for toast messages
     var toastMessage by remember { mutableStateOf<String?>(null) }
-
-    // Image picker
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        profilePictureUri = uri
-    }
 
     // Handle toast messages
     toastMessage?.let { message ->
@@ -101,7 +92,6 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                     address = user.address
                     phone = user.phone
                     email = user.email
-                    profilePictureUri = user.profilePictureUri
                 } else {
                     toastMessage = "Failed to load user data"
                 }
@@ -124,51 +114,7 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                     .verticalScroll(rememberScrollState()) // Make the column scrollable
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                // Profile picture centered
-                Box(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                        .align(Alignment.CenterHorizontally),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (profilePictureUri != null) {
-                        Image(
-                            painter = rememberImagePainter(profilePictureUri),
-                            contentDescription = "Profile Picture",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else if (profilePictureUrl.isNotBlank()) {
-                        // Load image from URL
-                        Image(
-                            painter = rememberImagePainter(profilePictureUrl),
-                            contentDescription = "Profile Picture from URL",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        Image(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "Default Profile Picture",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                }
-
                 Spacer(modifier = Modifier.height(8.dp))
-
-                TextButton(
-                    onClick = { imagePickerLauncher.launch("image/*") },
-                    modifier = Modifier.padding(2.dp).align(Alignment.CenterHorizontally)
-                ) {
-                    Text("Change Profile Picture", color = MaterialTheme.colorScheme.primary)
-                }
-
-                Spacer(modifier = Modifier.height(2.dp))
 
                 // Name field
                 if (isEditMode){
@@ -227,8 +173,7 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                                         age = age.toIntOrNull() ?: 0,
                                         address = address,
                                         phone = phone,
-                                        email = email,
-                                        profilePictureUri = profilePictureUri
+                                        email = email
                                     )
                                 )
                                 if (success) {
