@@ -83,6 +83,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.compose)
     // Coil for image loading in Compose
     implementation(libs.coil.compose)
+    implementation(libs.firebase.database.ktx)
     // Testing libraries
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

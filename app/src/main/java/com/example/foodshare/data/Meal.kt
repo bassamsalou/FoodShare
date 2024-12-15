@@ -8,7 +8,7 @@ data class Meal(
         val calories: String = "",
         val protein: String = "",
         val price: String = "",
-        val address: String = ""
+        val address: String = "",
 )
 
 

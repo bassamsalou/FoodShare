@@ -1,6 +1,7 @@
 package com.example.foodshare.data
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -57,8 +58,13 @@ class MealRepository {
     // New function to fetch all meals
     // Function to fetch all meals
     suspend fun getAllMeals(): List<Meal> {
+        val currentUserId = auth.currentUser?.uid ?: return emptyList()
         return try {
-            val result = mealsCollection.get().await()
+            val result = mealsCollection
+                .whereNotEqualTo("userId", currentUserId) // Exclude meals created by the current user
+                .get()
+                .await()
+
             result.documents.mapNotNull { doc ->
                 val meal = doc.toObject(Meal::class.java)
                 meal?.copy(id = doc.id) // Populate the ID field
@@ -66,6 +72,22 @@ class MealRepository {
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
+        }
+    }
+
+
+    suspend fun markMealAsBought(mealId: String, buyerId: String): Boolean {
+        return try {
+            // Reference to the specific meal document in Firestore
+            val mealRef = mealsCollection.document(mealId)
+
+            // Update the meal with the buyer's ID
+            mealRef.update("boughtBy", buyerId).await()
+
+            true // Success
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false // Failure
         }
     }
 }

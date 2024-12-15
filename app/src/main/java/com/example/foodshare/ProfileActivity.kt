@@ -116,50 +116,50 @@ fun ProfileScreen(userRepository: UserRepository, onLogout: () -> Unit) {
                 ) {
                     Spacer(modifier = Modifier.height(8.dp))
 
-                // Name field
-                if (isEditMode){
-                    EditableField(label = "Name", value = name, onValueChange = { name = it })
-                } else {
-                    ProfileInfoRow(label = "Name", value = name)
-                }
+                    // Name field
+                    if (isEditMode) {
+                        EditableField(label = "Name", value = name, onValueChange = { name = it })
+                    } else {
+                        ProfileInfoRow(label = "Name", value = name)
+                    }
 
                     Spacer(modifier = Modifier.height(2.dp))
 
-                // Age field
-                if (isEditMode) {
-                    EditableField(label = "Age", value = age, onValueChange = { age = it })
-                } else {
-                    ProfileInfoRow(label = "Age", value = age)
-                }
+                    // Age field
+                    if (isEditMode) {
+                        EditableField(label = "Age", value = age, onValueChange = { age = it })
+                    } else {
+                        ProfileInfoRow(label = "Age", value = age)
+                    }
 
                     Spacer(modifier = Modifier.height(2.dp))
 
-                // Address field
-                if (isEditMode) {
-                    EditableField(label = "Address", value = address, onValueChange = { address = it })
-                } else {
-                    ProfileInfoRow(label = "Address", value = address)
-                }
+                    // Address field
+                    if (isEditMode) {
+                        EditableField(label = "Address", value = address, onValueChange = { address = it })
+                    } else {
+                        ProfileInfoRow(label = "Address", value = address)
+                    }
 
                     Spacer(modifier = Modifier.height(2.dp))
 
-                // Phone field
-                if (isEditMode) {
-                    EditableField(label = "Phone", value = phone, onValueChange = { phone = it })
-                } else {
-                    ProfileInfoRow(label = "Phone", value = phone)
-                }
+                    // Phone field
+                    if (isEditMode) {
+                        EditableField(label = "Phone", value = phone, onValueChange = { phone = it })
+                    } else {
+                        ProfileInfoRow(label = "Phone", value = phone)
+                    }
 
                     Spacer(modifier = Modifier.height(2.dp))
 
-                // Email field
-                if (isEditMode) {
-                    EditableField(label = "Email", value = email, onValueChange = { email = it })
-                } else {
-                    ProfileInfoRow(label = "Email", value = email)
-                }
+                    // Email field
+                    if (isEditMode) {
+                        EditableField(label = "Email", value = email, onValueChange = { email = it })
+                    } else {
+                        ProfileInfoRow(label = "Email", value = email)
+                    }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     // Save button
                     ElevatedButton(
@@ -237,7 +237,7 @@ fun ProfileInfoRow(label: String, value: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .background(MaterialTheme.colorScheme.surface)
+            .background(Color.White) // Set the background to white
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -245,27 +245,39 @@ fun ProfileInfoRow(label: String, value: String) {
         Text(
             text = "$label:",
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.weight(0.3f)
+            modifier = Modifier.weight(0.3f),
+            color = Color.Black // Ensure label text is black
         )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(0.7f),
-            color = MaterialTheme.colorScheme.onSurface
+            color = Color.Black // Ensure value text is black
         )
     }
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditableField(label: String, value: String, onValueChange: (String) -> Unit) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label) },
+        label = { Text(label, style = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)) }, // Set label text color
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         singleLine = true,
-        shape = MaterialTheme.shapes.medium
+        shape = MaterialTheme.shapes.medium,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            containerColor = Color.White, // White background for the text field
+            focusedBorderColor = Color.Black, // Black border when focused
+            unfocusedBorderColor = Color.Gray, // Gray border when not focused
+            cursorColor = Color.Black, // Cursor color
+            focusedLabelColor = Color.Black, // Label color when focused
+            unfocusedLabelColor = Color.Black // Label color when not focused
+        ),
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black) // Set input text color to black
     )
 }

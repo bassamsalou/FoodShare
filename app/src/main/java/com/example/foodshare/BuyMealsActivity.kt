@@ -1,6 +1,7 @@
 package com.example.foodshare
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -16,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +28,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.foodshare.data.Meal
 import com.example.foodshare.data.MealRepository
 import com.example.foodshare.ui.theme.FoodShareTheme
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 class BuyMealsActivity : ComponentActivity() {
 
@@ -124,9 +128,22 @@ fun BuyMealsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MealDetailsScreen(mealId: String, mealRepository: MealRepository, navController: NavHostController) {
+fun MealDetailsScreen(
+    mealId: String,
+    mealRepository: MealRepository,
+    navController: NavHostController
+) {
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
     var meal by remember { mutableStateOf<Meal?>(null) }
     var isLoading by remember { mutableStateOf(true) }
+    var userId by remember { mutableStateOf("") } // Add userId (e.g., fetched from FirebaseAuth)
+
+    // Simulate fetching the current user's ID
+    LaunchedEffect(Unit) {
+        userId = FirebaseAuth.getInstance().currentUser?.uid ?: "UnknownUser"
+    }
 
     LaunchedEffect(mealId) {
         if (mealId.isNotEmpty()) {
@@ -171,56 +188,95 @@ fun MealDetailsScreen(mealId: String, mealRepository: MealRepository, navControl
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp),
-                    contentAlignment = androidx.compose.ui.Alignment.Center
+                    contentAlignment = androidx.compose.ui.Alignment.TopCenter
                 ) {
                     if (isLoading) {
                         CircularProgressIndicator()
                     } else {
                         meal?.let {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(),
-                                elevation = CardDefaults.cardElevation(8.dp),
-                                colors = CardDefaults.cardColors(containerColor = Color.White)
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Column(
+                                Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(16.dp),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                        .wrapContentHeight(),
+                                    elevation = CardDefaults.cardElevation(8.dp),
+                                    colors = CardDefaults.cardColors(containerColor = Color.White)
                                 ) {
-                                    Text(
-                                        text = "Name: ${it.foodName}",
-                                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 24.sp),
-                                        color = Color.Black
-                                    )
-                                    Text(
-                                        text = "Description: ${it.description}",
-                                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
-                                        color = Color.Gray
-                                    )
-                                    Text(
-                                        text = "Calories: ${it.calories}",
-                                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
-                                        color = Color.Black
-                                    )
-                                    Text(
-                                        text = "Protein: ${it.protein}",
-                                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
-                                        color = Color.Black
-                                    )
-                                    Text(
-                                        text = "Price: ${it.price} kr",
-                                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
-                                        color = Color.Black
-                                    )
-                                    Text(
-                                        text = "Address: ${it.address}",
-                                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
-                                        color = Color.Black
-                                    )
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Text(
+                                            text = "Name: ${it.foodName}",
+                                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 24.sp),
+                                            color = Color.Black
+                                        )
+                                        Text(
+                                            text = "Description: ${it.description}",
+                                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                                            color = Color.Gray
+                                        )
+                                        Text(
+                                            text = "Calories: ${it.calories}",
+                                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                                            color = Color.Black
+                                        )
+                                        Text(
+                                            text = "Protein: ${it.protein}",
+                                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                                            color = Color.Black
+                                        )
+                                        Text(
+                                            text = "Price: ${it.price} kr",
+                                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                                            color = Color.Black
+                                        )
+                                        Text(
+                                            text = "Address: ${it.address}",
+                                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                                            color = Color.Black
+                                        )
+                                    }
                                 }
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                // "Buy" Button
+                                Button(
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            val success = mealRepository.markMealAsBought(mealId, userId)
+                                            if (success) {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Meal bought successfully!",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                                navController.popBackStack() // Navigate back after success
+                                            } else {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Failed to buy the meal. Please try again.",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp),
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                                ) {
+                                    Text("Buy", style = MaterialTheme.typography.titleMedium, color = Color.White)
+                                }
+
+
+                                Spacer(modifier = Modifier.height(16.dp))
                             }
                         } ?: Text(
                             text = "Meal not found.",
@@ -233,6 +289,7 @@ fun MealDetailsScreen(mealId: String, mealRepository: MealRepository, navControl
         }
     )
 }
+
 
 
 @Composable
