@@ -43,7 +43,10 @@ fun ViewMealsScreen(mealRepository: MealRepository) {
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("View Meals") })
+            TopAppBar(
+                title = { Text("View Meals", style = MaterialTheme.typography.headlineLarge) },
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
+            )
         },
         content = { padding ->
             if (isLoading) {
