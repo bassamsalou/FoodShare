@@ -1,5 +1,6 @@
 package com.example.foodshare.data
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -11,16 +12,16 @@ class MealRepository {
     private val mealsCollection = db.collection("meals")
     private val auth = FirebaseAuth.getInstance()
 
-    // Function to add a meal
     suspend fun addMeal(meal: Meal): Boolean {
         val userId = auth.currentUser?.uid ?: return false
-        val documentRef = mealsCollection.document() // Generate unique document ID
-        val mealWithId = meal.copy(id = documentRef.id, userId = userId) // Assign ID
+        val documentRef = mealsCollection.document()
+        val mealWithId = meal.copy(id = documentRef.id, userId = userId)
         return try {
             documentRef.set(mealWithId).await()
+            Log.d("MealRepository", "Meal added: $mealWithId")
             true
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("MealRepository", "Error adding meal", e)
             false
         }
     }
@@ -40,37 +41,60 @@ class MealRepository {
         }
     }
 
-    // Function to fetch a meal by its ID
     suspend fun getMealById(mealId: String): Meal? {
         return try {
-            val document = mealsCollection.document(mealId).get().await()
+            val document = FirebaseFirestore.getInstance()
+                .collection("meals")
+                .document(mealId)
+                .get()
+                .await()
+
             if (document.exists()) {
-                document.toObject(Meal::class.java)?.copy(id = document.id)
+                val data = document.data ?: return null
+                Meal(
+                    id = document.id,
+                    userId = data["userId"]?.toString() ?: "",
+                    foodName = data["foodName"]?.toString() ?: "",
+                    description = data["description"]?.toString() ?: "",
+                    calories = data["calories"]?.toString() ?: "",
+                    protein = data["protein"]?.toString() ?: "",
+                    price = data["price"]?.toString() ?: "", // Convert price to String
+                    address = data["address"]?.toString() ?: ""
+                )
             } else {
                 null
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("MealRepository", "Error fetching meal by ID", e)
             null
         }
     }
 
-    // New function to fetch all meals
-    // Function to fetch all meals
     suspend fun getAllMeals(): List<Meal> {
-        val currentUserId = auth.currentUser?.uid ?: return emptyList()
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return emptyList()
         return try {
-            val result = mealsCollection
-                .whereNotEqualTo("userId", currentUserId) // Exclude meals created by the current user
+            val result = FirebaseFirestore.getInstance()
+                .collection("meals")
+                .whereNotEqualTo("userId", currentUserId) // Exclude current user's meals
                 .get()
                 .await()
 
+            // Manually map each document to a `Meal` object
             result.documents.mapNotNull { doc ->
-                val meal = doc.toObject(Meal::class.java)
-                meal?.copy(id = doc.id) // Populate the ID field
+                val data = doc.data ?: return@mapNotNull null
+                Meal(
+                    id = doc.id,
+                    userId = data["userId"]?.toString() ?: "",
+                    foodName = data["foodName"]?.toString() ?: "",
+                    description = data["description"]?.toString() ?: "",
+                    calories = data["calories"]?.toString() ?: "",
+                    protein = data["protein"]?.toString() ?: "",
+                    price = data["price"]?.toString() ?: "", // Convert price to String
+                    address = data["address"]?.toString() ?: ""
+                )
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("MealRepository", "Error fetching meals", e)
             emptyList()
         }
     }
