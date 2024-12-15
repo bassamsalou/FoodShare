@@ -15,7 +15,7 @@ class MealRepository {
     suspend fun addMeal(meal: Meal): Boolean {
         val userId = auth.currentUser?.uid ?: return false
         val documentRef = mealsCollection.document()
-        val mealWithId = meal.copy(id = documentRef.id, userId = userId)
+        val mealWithId = meal.copy(id = documentRef.id, userId = userId, boughtBy = "") // Add default boughtBy
         return try {
             documentRef.set(mealWithId).await()
             Log.d("MealRepository", "Meal added: $mealWithId")
@@ -99,19 +99,18 @@ class MealRepository {
         }
     }
 
-
     suspend fun markMealAsBought(mealId: String, buyerId: String): Boolean {
         return try {
-            // Reference to the specific meal document in Firestore
             val mealRef = mealsCollection.document(mealId)
 
-            // Update the meal with the buyer's ID
+            // Update ONLY the `boughtBy` field
             mealRef.update("boughtBy", buyerId).await()
 
-            true // Success
+            Log.d("MealRepository", "Meal marked as bought by user: $buyerId")
+            true
         } catch (e: Exception) {
-            e.printStackTrace()
-            false // Failure
+            Log.e("MealRepository", "Error marking meal as bought", e)
+            false
         }
     }
 }

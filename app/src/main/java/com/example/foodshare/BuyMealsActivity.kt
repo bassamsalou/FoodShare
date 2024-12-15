@@ -246,7 +246,6 @@ fun MealDetailsScreen(
 
                                 Spacer(modifier = Modifier.height(16.dp))
 
-                                // "Buy" Button
                                 Button(
                                     onClick = {
                                         coroutineScope.launch {
@@ -274,7 +273,6 @@ fun MealDetailsScreen(
                                 ) {
                                     Text("Buy", style = MaterialTheme.typography.titleMedium, color = Color.White)
                                 }
-
 
                                 Spacer(modifier = Modifier.height(16.dp))
                             }

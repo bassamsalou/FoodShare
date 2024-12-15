@@ -110,15 +110,16 @@ fun SignInScreen(
                             value = email,
                             onValueChange = { email = it },
                             label = { Text("Email") },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+                            modifier = Modifier.fillMaxWidth(),
                             colors = TextFieldDefaults.outlinedTextFieldColors(
-                                containerColor = Color.White,
-                                focusedBorderColor = Color.Blue,
-                                unfocusedBorderColor = Color.Gray
+                                focusedTextColor = Color.Black, // Text color when the field is focused
+                                unfocusedTextColor = Color.Black, // Text color when the field is not focused
+                                containerColor = Color.White, // White background for the field
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                                focusedLabelColor = Color.Black,
+                                unfocusedLabelColor = Color.Black,
+                                cursorColor = Color.Black
                             )
                         )
 
@@ -126,15 +127,16 @@ fun SignInScreen(
                             value = password,
                             onValueChange = { password = it },
                             label = { Text("Password") },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+                            modifier = Modifier.fillMaxWidth(),
                             colors = TextFieldDefaults.outlinedTextFieldColors(
-                                containerColor = Color.White,
-                                focusedBorderColor = Color.Blue,
-                                unfocusedBorderColor = Color.Gray
+                                focusedTextColor = Color.Black, // Text color when the field is focused
+                                unfocusedTextColor = Color.Black, // Text color when the field is not focused
+                                containerColor = Color.White, // White background for the field
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                                focusedLabelColor = Color.Black,
+                                unfocusedLabelColor = Color.Black,
+                                cursorColor = Color.Black
                             )
                         )
 

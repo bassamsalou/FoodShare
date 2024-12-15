@@ -1,7 +1,7 @@
 package com.example.foodshare.data;
 
 data class Meal(
-        val id: String = "", // Unique identifier for the meal
+        val id: String = "",
         val userId: String = "",
         val foodName: String = "",
         val description: String = "",
@@ -9,6 +9,5 @@ data class Meal(
         val protein: String = "",
         val price: String = "",
         val address: String = "",
+        val boughtBy: String = ""
 )
-
-

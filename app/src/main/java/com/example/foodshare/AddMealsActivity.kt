@@ -93,10 +93,11 @@ fun AddMealsScreen(mealRepository: MealRepository) {
                         value = foodName,
                         onValueChange = { foodName = it },
                         label = { Text("Food Name") },
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            containerColor = Color.White, // White fill for input
+                            focusedTextColor = Color.Black, // Text color when the field is focused
+                            unfocusedTextColor = Color.Black, // Text color when the field is not focused
+                            containerColor = Color.White, // White background for the field
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
                             focusedLabelColor = Color.Black,
@@ -109,10 +110,11 @@ fun AddMealsScreen(mealRepository: MealRepository) {
                         value = description,
                         onValueChange = { description = it },
                         label = { Text("Description") },
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            containerColor = Color.White,
+                            focusedTextColor = Color.Black, // Text color when the field is focused
+                            unfocusedTextColor = Color.Black, // Text color when the field is not focused
+                            containerColor = Color.White, // White background for the field
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
                             focusedLabelColor = Color.Black,
@@ -125,11 +127,11 @@ fun AddMealsScreen(mealRepository: MealRepository) {
                         value = calories,
                         onValueChange = { calories = it },
                         label = { Text("Calories") },
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            containerColor = Color.White,
+                            focusedTextColor = Color.Black, // Text color when the field is focused
+                            unfocusedTextColor = Color.Black, // Text color when the field is not focused
+                            containerColor = Color.White, // White background for the field
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
                             focusedLabelColor = Color.Black,
@@ -142,11 +144,11 @@ fun AddMealsScreen(mealRepository: MealRepository) {
                         value = protein,
                         onValueChange = { protein = it },
                         label = { Text("Protein (g)") },
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            containerColor = Color.White,
+                            focusedTextColor = Color.Black, // Text color when the field is focused
+                            unfocusedTextColor = Color.Black, // Text color when the field is not focused
+                            containerColor = Color.White, // White background for the field
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
                             focusedLabelColor = Color.Black,
@@ -159,11 +161,11 @@ fun AddMealsScreen(mealRepository: MealRepository) {
                         value = price,
                         onValueChange = { price = it },
                         label = { Text("Price (dkk)") },
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            containerColor = Color.White,
+                            focusedTextColor = Color.Black, // Text color when the field is focused
+                            unfocusedTextColor = Color.Black, // Text color when the field is not focused
+                            containerColor = Color.White, // White background for the field
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
                             focusedLabelColor = Color.Black,
@@ -176,10 +178,11 @@ fun AddMealsScreen(mealRepository: MealRepository) {
                         value = address,
                         onValueChange = { address = it },
                         label = { Text("Address") },
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            containerColor = Color.White,
+                            focusedTextColor = Color.Black, // Text color when the field is focused
+                            unfocusedTextColor = Color.Black, // Text color when the field is not focused
+                            containerColor = Color.White, // White background for the field
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
                             focusedLabelColor = Color.Black,
